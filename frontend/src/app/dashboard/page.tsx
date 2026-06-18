@@ -3,14 +3,11 @@
 export default function Dashboard() {
   return (
     <div>
-      <h1>My Good Deeds</h1>
+      <h1>Dashboard</h1>
+
+      <h2>My good deeds</h2>
 
       <button>Add deed</button>
-
-      <ul>
-        <li>Helped an old man</li>
-        <li>Donated money</li>
-      </ul>
     </div>
   );
 }
