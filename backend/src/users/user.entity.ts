@@ -1,3 +1,5 @@
+import { OneToMany } from 'typeorm';
+import { GoodDeed } from '../good-deeds/good-deed.entity';
 import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity('users')
@@ -10,4 +12,11 @@ export class User {
 
     @Column()
     passwordHash!: string;
+
+    @OneToMany(
+        () => GoodDeed,
+        (goodDeed) => goodDeed.user
+    )
+    goodDeeds!: GoodDeed[];
 }
+
