@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { GoodDeed } from './good-deed.entity';
+import { UpdateGoodDeedDto } from './dto/update-good-deed.dto';
 
 @Injectable()
 export class GoodDeedsService {
@@ -72,5 +73,36 @@ export class GoodDeedsService {
         await this.goodDeedRepository.remove(
             goodDeed,
         )
+    }
+
+    async updateGoodDeed(
+        id: number,
+        userId: number,
+        dto: UpdateGoodDeedDto,
+    ) : Promise<GoodDeed> {
+        const goodDeed = await this.goodDeedRepository.findOne({
+            where: { id },
+            relations: {user: true},
+        });
+
+        if (!goodDeed) {
+            throw new NotFoundException(
+                'Good deed not found',
+            );
+        }
+
+        if (goodDeed.user.id !== userId) {
+            throw new ForbiddenException(
+                'Access denied',
+            );
+        }
+
+        Object.assign(goodDeed, dto);
+
+        await this.goodDeedRepository.save(
+            goodDeed,
+        )
+
+        return this.getGoodDeedById(id);
     }
 }

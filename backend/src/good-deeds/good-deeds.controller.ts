@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Req, UseGuards, Get, Param, Delete} from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Get, Param, Delete, Patch} from '@nestjs/common';
 import { GoodDeedsService } from "./good-deeds.service";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { CreateGoodDeedDto } from "./dto/create-good-deed.dto";
+import { UpdateGoodDeedDto } from './dto/update-good-deed.dto';
 
 @Controller('good-deeds')
 export class GoodDeedsController {
@@ -56,5 +57,19 @@ export class GoodDeedsController {
         return {
             message: 'Good deed deleted',
         };
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch(':id')
+    async update(
+        @Param('id') id: string,
+        @Body() dto: UpdateGoodDeedDto,
+        @Req() req,
+    ) {
+        return this.goodDeedsService.updateGoodDeed(
+            Number(id),
+            req.user.userId,
+            dto,
+        )
     }
 }
