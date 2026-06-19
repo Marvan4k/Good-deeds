@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException  } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -50,5 +50,27 @@ export class GoodDeedsService {
         }
         
         return goodDeed;
+    }
+
+    async deleteGoodDeed (
+        id: number,
+        userId: number,
+    ): Promise<void>{
+        const goodDeed = await this.goodDeedRepository.findOne({
+            where: {id},
+            relations: {user: true},
+        })
+
+        if (!goodDeed) {
+            throw new NotFoundException('Good deed not found');
+        }
+
+        if(goodDeed.user.id !== userId){
+            throw new ForbiddenException('Access denied');
+        }
+
+        await this.goodDeedRepository.remove(
+            goodDeed,
+        )
     }
 }

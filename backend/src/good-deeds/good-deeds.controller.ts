@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, UseGuards, Get, Param} from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Get, Param, Delete} from '@nestjs/common';
 import { GoodDeedsService } from "./good-deeds.service";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { CreateGoodDeedDto } from "./dto/create-good-deed.dto";
@@ -40,5 +40,21 @@ export class GoodDeedsController {
         return this.goodDeedsService.getGoodDeedById(
             Number(id),
         );
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete(':id')
+    async delete(
+        @Param('id') id : string,
+        @Req() req,
+    ) {
+        await this.goodDeedsService.deleteGoodDeed(
+            Number(id),
+            req.user.userId,
+        )
+
+        return {
+            message: 'Good deed deleted',
+        };
     }
 }
