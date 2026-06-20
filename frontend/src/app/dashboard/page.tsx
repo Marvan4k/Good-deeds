@@ -1,4 +1,5 @@
 "use client"
+import FriendsSection from "@/features/friends/FriendsSection";
 import GoodDeedsSection from "@/features/good-deeds/GoodDeedsSection";
 import { getMe } from "@/shared/api/auth";
 import { useRouter } from "next/navigation";
@@ -26,6 +27,8 @@ export default function Dashboard() {
       </div>
 
       <GoodDeedsSection />
+
+      <FriendsSection />
     </main>
   );
 }
