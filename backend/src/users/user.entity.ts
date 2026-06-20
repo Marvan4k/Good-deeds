@@ -1,4 +1,4 @@
-import { OneToMany } from 'typeorm';
+import { JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { GoodDeed } from '../good-deeds/good-deed.entity';
 import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
 
@@ -13,10 +13,19 @@ export class User {
     @Column()
     passwordHash!: string;
 
+    @Column({
+        unique: true,
+    })
+    username!: string;
+
     @OneToMany(
         () => GoodDeed,
         (goodDeed) => goodDeed.user
     )
     goodDeeds!: GoodDeed[];
+
+    @ManyToMany(() => User)
+    @JoinTable()
+    friends!: User[];
 }
 
