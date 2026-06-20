@@ -63,3 +63,24 @@ export async function removeFriend(
 
     return res.json();
 }
+
+export async function getFriendGoodDeeds(
+    token: string,
+    username: string,
+) {
+    const res = await fetch(`${API_URL}/users/${username}/good-deeds`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error(
+            "Cannot load friend's deeds",
+        );
+    }
+
+    return res.json();
+}
