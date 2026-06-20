@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +38,7 @@ export class AuthService {
         };
     }
 
-    async login(dto: RegisterDto){
+    async login(dto: LoginDto){
         const user = await this.usersService.findByEmail(dto.email);
 
         if(!user){
