@@ -1,7 +1,24 @@
 'use client';
 
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { store } from './store';
+import { useEffect } from 'react';
+import { setToken } from './authSlice';
+
+function AuthLoader() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token =
+      localStorage.getItem('token');
+
+    if (token) {
+      dispatch(setToken(token));
+    }
+  }, [dispatch]);
+
+  return null;
+}
 
 export default function StoreProvider({
   children,
@@ -10,6 +27,7 @@ export default function StoreProvider({
 }) {
   return (
     <Provider store={store}>
+      <AuthLoader />
       {children}
     </Provider>
   );

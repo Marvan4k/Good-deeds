@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { UsersService } from 'src/users/users.service';
@@ -16,9 +16,9 @@ export class AuthService {
         const existingUser = await this.usersService.findByEmail(dto.email);
 
         if(existingUser){
-            return {
-                message: 'User already exists'
-            }
+            throw new BadRequestException(
+                'User already exists',
+            );
         }
 
         const hash = await bcrypt.hash(dto.password, 10)
@@ -28,14 +28,11 @@ export class AuthService {
             dto.email,
             hash,   
         );
-        return { 
-            message: 'User can be created',
-            user: {
-                id: user.id,
-                email: user.email,
-                username: user.username,
-            },
-        };
+        return this.generateToken(
+            user.id,
+            user.email,
+            user.username
+        );
     }
 
     async login(dto: LoginDto){
@@ -54,15 +51,20 @@ export class AuthService {
              throw new UnauthorizedException('Invalid password');        
         }
 
-        return this.generateToken(user.id, user.email)
+        return this.generateToken(
+            user.id,
+            user.email,
+            user.username
+        )
     }
 
-    private generateToken(userId : number, email : string){
+    private generateToken(userId : number, email : string, username: string){
         return {
             access_token: this.jwtService.sign({
                 sub: userId,
                 email,
-            })
+                username,
+            }),
         }
     }
 }
