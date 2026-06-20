@@ -1,6 +1,7 @@
-import { Controller, Delete, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Controller('users')
 export class UsersController {
@@ -48,5 +49,31 @@ export class UsersController {
         return this.usersServise.getUserGoodDeeds(
             username,
         );
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch('me')
+    async updateMe(
+        @Body() dto: UpdateUserDto,
+        @Req() req,
+    ) {
+        return this.usersServise.updateUser(
+            req.user.userId,
+            dto,
+        );
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('me')
+    async deleteMe(
+        @Req() req,
+    ) {
+        await this.usersServise.deleteUser(
+            req.user.userId,
+        );
+
+        return {
+            message: 'User deleted',
+        };
     }
 }

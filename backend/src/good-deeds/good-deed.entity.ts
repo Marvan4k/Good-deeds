@@ -14,7 +14,10 @@ export class GoodDeed {
 
     @ManyToOne(
         () => User,
-        (user) => user.goodDeeds
+        (user) => user.goodDeeds,
+        {
+            onDelete: 'CASCADE',
+        }
     )
     user!: User;
 }
