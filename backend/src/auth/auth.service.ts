@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { UsersService } from 'src/users/users.service';
@@ -57,6 +57,24 @@ export class AuthService {
             user.username
         )
     }
+
+    async getMe(userId: number) {
+        const user = await this.usersService.findById(userId,);
+
+        if (!user) {
+            throw new NotFoundException(
+                'User not found',
+            );
+        }
+
+        return {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+        };
+    }
+    
+    
 
     private generateToken(userId : number, email : string, username: string){
         return {
