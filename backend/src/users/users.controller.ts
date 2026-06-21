@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } fro
 import { UsersService } from "./users.service";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { ChangePasswordDto } from "./dto/change-password.dto";
 
 @Controller('users')
 export class UsersController {
@@ -75,5 +76,17 @@ export class UsersController {
         return {
             message: 'User deleted',
         };
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch('me/password')
+    async changePassword(
+        @Body() dto: ChangePasswordDto,
+        @Req() req,
+    ) {
+        return this.usersServise.changePassword(
+            req.user.userId,
+            dto,
+        );
     }
 }

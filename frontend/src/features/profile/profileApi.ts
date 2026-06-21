@@ -68,3 +68,33 @@ export async function deleteProfile(
 
     return res.json();
 }
+
+export async function changePassword(
+    token: string,
+    oldPassword: string,
+    newPassword: string,
+) {
+    const res = await fetch(`${API_URL}/users/me/password`,
+        {
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                oldPassword,
+                newPassword,
+            }),
+        }
+    );
+
+    if (!res.ok) {
+        const data = await res.json();
+
+        throw new Error(
+            data.message || "Cannot change password"
+        );
+    }
+
+    return res.json();
+}

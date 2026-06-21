@@ -1,9 +1,11 @@
-import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -180,6 +182,40 @@ export class UsersService {
         await this.usersRepository.remove(
             user,
         )
+    }
+
+    async changePassword(userId: number, dto: ChangePasswordDto) {
+        const user = await this.findById(userId);
+
+        if (!user) {
+            throw new NotFoundException(
+                'User not found',
+            );
+        }
+
+        const valid = await bcrypt.compare(
+            dto.oldPassword,
+            user.passwordHash,
+        );
+
+        if (!valid) {
+            throw new UnauthorizedException(
+                'Wrong password',
+            );
+        }
+
+        user.passwordHash = await bcrypt.hash(
+            dto.newPassword,
+            10,
+        );
+
+        await this.usersRepository.save(
+            user,
+        );
+
+        return {
+            message: 'Password updated',
+        };
     }
 
 }
